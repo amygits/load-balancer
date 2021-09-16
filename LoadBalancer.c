@@ -7,6 +7,7 @@
 #include "LoadBalancer.h"
 #include <stdlib.h>
 #include <pthread.h>
+#include <stdio.h>
 
 pthread_mutex_t lock;
 
@@ -55,10 +56,10 @@ void balancer_add_job(balancer **lb, int user_id, int data, int* data_return){
     // If current load batch size is less than max batch size
     if (lb->cur_size < lb->max_size){
         pthread_mutex_lock*(&lock);
-        struct job_node newJob = (job_node) malloc(sizeof(job_node));
-        newJob->user_id = user_id;
-        newJob->data = data;
-        newJob->data_result = data_return;
+        struct job_node newJob = malloc(sizeof(job_node));
+        newJob.user_id = user_id;
+        newJob.data = data;
+        newJob.data_result = data_return;
         
         struct job_node* temp = lb->head;
         lb->head = newJob;

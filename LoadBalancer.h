@@ -11,7 +11,9 @@
 #include "InstanceHost.h"
 
 //struct for representing the load balancer
+
 typedef struct balancer balancer;
+
 
 //structure to track jobs as they are created. serves as list node.
 struct job_node {
