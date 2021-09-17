@@ -15,6 +15,12 @@
 //struct for representing the host
 typedef struct host host;
 
+struct host {
+    
+    int instances;
+    
+};
+
 struct job_node; //defined in LoadBalancer
 
 //forward declarations for (public) functions
