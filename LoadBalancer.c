@@ -6,9 +6,10 @@
 
 #include "LoadBalancer.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <pthread.h>
 
-pthread_mutex_t lock;
+pthread_mutex_t *lock;
 
 struct balancer{
     
@@ -24,7 +25,7 @@ struct balancer{
 balancer* balancer_create(int batch_size) {
     
     printf("Entering balancer creation...");
-    balancer* lb = malloc(balancer*) sizeof(balancer);
+    balancer* lb = (balancer*)malloc(sizeof(balancer));
     lb->cur_size = 0;
     lb->max_size = batch_size;
     
@@ -39,6 +40,15 @@ balancer* balancer_create(int batch_size) {
 void balancer_destroy(balancer** lb){
     printf("Entering balancer destruction..");
     balancer *temp = lb;
+    
+    struct job_node *ptr = &(temp->head);
+    while(!ptr->next == NULL){
+        struct job_node* tempn;
+        tempn = ptr;
+        ptr = ptr-> next;
+        free(tempn);
+        tempn = NULL;
+    }
     free(lb);
     temp = NULL;
     printf("Balancer successfully destroyed.\n");
@@ -47,26 +57,33 @@ void balancer_destroy(balancer** lb){
 /*
  * Adds a job to the load balancer (job must be protected by mutex)
  */
-void balancer_add_job(balancer **lb, int user_id, int data, int* data_return){
+void balancer_add_job(balancer *lb, int user_id, int data, int* data_return){
     
-    printf("Attempting to add job to load balancer..");
+    printf("LoadBalancer: Received new job from user# %d to process data=%d and store it at %p.\n", user_id, data, data_return);
 
     pthread_mutex_init(&lock, NULL);
     // If current load batch size is less than max batch size
+    printf("entering lock\n");
     if (lb->cur_size < lb->max_size){
-        pthread_mutex_lock*(&lock);
-        struct job_node newJob = (job_node) malloc(sizeof(job_node));
+        pthread_mutex_lock(&lock);
+        struct job_node *newJob = malloc(sizeof(struct job_node));
         newJob->user_id = user_id;
         newJob->data = data;
         newJob->data_result = data_return;
+        printf("created new job node and added data to node..\n");
         
         struct job_node* temp = lb->head;
-        lb->head = newJob;
-        temp->next = newJob;
         
+        while(!temp->next == NULL) {
+            temp = temp->next;
+        }
+        
+        temp->next = &newJob;      
+        printf("adding to the end of load balancer batch..\n");
         lb->cur_size = lb->cur_size++;
         printf("Job add successful.\n");
         pthread_mutex_unlock(&lock);
+        printf("exiting lock\n");
     } 
     
     else if (lb->cur_size == lb->max_size){
