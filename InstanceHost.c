@@ -1,7 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * A file containing a set of functions to simulate a cloud-like server instance host
+ * 
+ * @author Amy Ma
+ * @version 1.1
  */
 
 #include "InstanceHost.h"
@@ -59,8 +60,6 @@ void host_destroy(host** h) {
     
     pthread_mutex_destroy(&lock);
     //printf("Host instance destroyed\n");
-    
-   
     
 }
 
