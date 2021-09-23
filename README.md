@@ -1,2 +1,2 @@
 # load-balancer
-Load balancer simulating server batch requests
+Program simulating a load balancer handling server batch requests
